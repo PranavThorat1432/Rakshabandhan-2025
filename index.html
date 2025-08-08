@@ -146,17 +146,28 @@
 
                 <!-- Card Front with Video -->
                 <div class="card-face absolute w-full h-full rounded-xl shadow-2xl overflow-hidden bg-black">
-                    <video id="rakhi-video" class="w-full h-full object-cover" preload="metadata" muted playsinline>
+                    <video id="rakhi-video" class="w-full h-full object-cover" preload="metadata" muted playsinline controls>
                         <!-- Using a royalty-free video for demonstration -->
                         <source
                             src="rakhi_video.mp4"
                             type="video/mp4">
+                        <source
+                            src="rakhi_video.mp4"
+                            type="video/mp4; codecs='avc1.42E01E, mp4a.40.2'">
                         Aapka browser video tag support nahi karta.
                     </video>
                     <div id="play-overlay"
                         class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-300">
                         <span
                             class="text-white text-2xl font-semibold bg-black bg-opacity-40 px-6 py-3 rounded-lg backdrop-blur-sm">Click Me..</span>
+                    </div>
+                    <!-- Fallback content if video fails -->
+                    <div id="video-fallback" class="absolute inset-0 bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-2xl font-bold" style="display: none;">
+                        <div class="text-center">
+                            <div class="text-6xl mb-4">🎉</div>
+                            <div class="text-2xl font-bold">Happy Raksha Bandhan!</div>
+                            <div class="text-lg mt-2">Click to see the message</div>
+                        </div>
                     </div>
                 </div>
 
@@ -200,6 +211,36 @@
             cssTest.style.display = 'block';
             console.log('CSS test element shown');
         }
+        
+        // Video error handling
+        const videoFallback = document.getElementById('video-fallback');
+        
+        video.addEventListener('error', function(e) {
+            console.error('Video error:', e);
+            console.error('Video error details:', video.error);
+            if (videoFallback) {
+                videoFallback.style.display = 'flex';
+                playOverlay.style.display = 'none';
+            }
+        });
+        
+        video.addEventListener('loadeddata', function() {
+            console.log('Video loaded successfully');
+        });
+        
+        video.addEventListener('loadstart', function() {
+            console.log('Video loading started');
+        });
+        
+        // Test video file accessibility
+        fetch('rakhi_video.mp4', { method: 'HEAD' })
+            .then(response => {
+                console.log('Video file accessible:', response.ok);
+                console.log('Video file status:', response.status);
+            })
+            .catch(error => {
+                console.error('Video file not accessible:', error);
+            });
 
         // --- Video Play Logic ---
         playOverlay.addEventListener('click', () => {
@@ -209,6 +250,14 @@
                 // If autoplay is blocked, we can show the controls or a message
                 playOverlay.style.opacity = '1'; // Show overlay again if play fails
             });
+        });
+        
+        // --- Fallback Click Logic ---
+        videoFallback.addEventListener('click', () => {
+            if (isCardOpen) return;
+            card.classList.add('is-flipped');
+            isCardOpen = true;
+            createConfettiBlast();
         });
 
         // --- Card Flip on Video End ---
