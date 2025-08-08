@@ -144,29 +144,30 @@
         <div class="scene w-full max-w-sm h-72 md:h-80">
             <div id="greeting-card" class="card relative w-full h-full">
 
-                <!-- Card Front with Video -->
-                <div class="card-face absolute w-full h-full rounded-xl shadow-2xl overflow-hidden bg-black">
-                    <video id="rakhi-video" class="w-full h-full object-cover" preload="metadata" muted playsinline controls>
-                        <!-- Using a royalty-free video for demonstration -->
-                        <source
-                            src="rakhi_video.mp4"
-                            type="video/mp4">
-                        <source
-                            src="rakhi_video.mp4"
-                            type="video/mp4; codecs='avc1.42E01E, mp4a.40.2'">
-                        Aapka browser video tag support nahi karta.
-                    </video>
-                    <div id="play-overlay"
-                        class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-300">
-                        <span
-                            class="text-white text-2xl font-semibold bg-black bg-opacity-40 px-6 py-3 rounded-lg backdrop-blur-sm">Click Me..</span>
+                <!-- Card Front with Animated Design -->
+                <div class="card-face absolute w-full h-full rounded-xl shadow-2xl overflow-hidden bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600">
+                    <!-- Animated background elements -->
+                    <div class="absolute inset-0">
+                        <div class="absolute top-4 left-4 text-4xl animate-bounce">🪔</div>
+                        <div class="absolute top-8 right-6 text-3xl animate-pulse">🎁</div>
+                        <div class="absolute bottom-8 left-6 text-4xl animate-bounce" style="animation-delay: 0.5s;">🦋</div>
+                        <div class="absolute bottom-4 right-4 text-3xl animate-pulse" style="animation-delay: 1s;">✨</div>
                     </div>
-                    <!-- Fallback content if video fails -->
-                    <div id="video-fallback" class="absolute inset-0 bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-2xl font-bold" style="display: none;">
+                    
+                    <!-- Main content -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
                         <div class="text-center">
-                            <div class="text-6xl mb-4">🎉</div>
-                            <div class="text-2xl font-bold">Happy Raksha Bandhan!</div>
-                            <div class="text-lg mt-2">Click to see the message</div>
+                            <div class="text-6xl mb-4 animate-pulse">🎉</div>
+                            <div class="text-2xl font-bold mb-2">Happy Raksha Bandhan!</div>
+                            <div class="text-lg opacity-90">Click to see the special message</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Click overlay -->
+                    <div id="play-overlay"
+                        class="absolute inset-0 bg-black bg-opacity-20 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-300 hover:bg-opacity-30">
+                        <div class="bg-white bg-opacity-20 backdrop-blur-sm px-6 py-3 rounded-lg border border-white border-opacity-30">
+                            <span class="text-white text-xl font-semibold">Click Me..</span>
                         </div>
                     </div>
                 </div>
@@ -195,15 +196,10 @@
         console.log('Page loaded');
         
         const card = document.getElementById('greeting-card');
-        const video = document.getElementById('rakhi-video');
         const playOverlay = document.getElementById('play-overlay');
         const confettiContainer = document.getElementById('confetti-container');
         const bgElementsContainer = document.getElementById('background-elements');
         let isCardOpen = false;
-        
-        // Debug: Check video element
-        console.log('Video element:', video);
-        console.log('Video src:', video ? video.querySelector('source').src : 'No video found');
         
         // Debug: Show CSS test element
         const cssTest = document.getElementById('css-test');
@@ -211,61 +207,17 @@
             cssTest.style.display = 'block';
             console.log('CSS test element shown');
         }
-        
-        // Video error handling
-        const videoFallback = document.getElementById('video-fallback');
-        
-        video.addEventListener('error', function(e) {
-            console.error('Video error:', e);
-            console.error('Video error details:', video.error);
-            if (videoFallback) {
-                videoFallback.style.display = 'flex';
-                playOverlay.style.display = 'none';
-            }
-        });
-        
-        video.addEventListener('loadeddata', function() {
-            console.log('Video loaded successfully');
-        });
-        
-        video.addEventListener('loadstart', function() {
-            console.log('Video loading started');
-        });
-        
-        // Test video file accessibility
-        fetch('rakhi_video.mp4', { method: 'HEAD' })
-            .then(response => {
-                console.log('Video file accessible:', response.ok);
-                console.log('Video file status:', response.status);
-            })
-            .catch(error => {
-                console.error('Video file not accessible:', error);
-            });
 
-        // --- Video Play Logic ---
+                // --- Click Logic ---
         playOverlay.addEventListener('click', () => {
-            playOverlay.style.opacity = '0'; // Hide the overlay
-            video.play().catch(error => {
-                console.error("Video play failed:", error);
-                // If autoplay is blocked, we can show the controls or a message
-                playOverlay.style.opacity = '1'; // Show overlay again if play fails
-            });
-        });
-        
-        // --- Fallback Click Logic ---
-        videoFallback.addEventListener('click', () => {
             if (isCardOpen) return;
-            card.classList.add('is-flipped');
-            isCardOpen = true;
-            createConfettiBlast();
-        });
-
-        // --- Card Flip on Video End ---
-        video.addEventListener('ended', () => {
-            if (isCardOpen) return;
-            card.classList.add('is-flipped');
-            isCardOpen = true;
-            createConfettiBlast();
+            
+            // Add a small delay for better UX
+            setTimeout(() => {
+                card.classList.add('is-flipped');
+                isCardOpen = true;
+                createConfettiBlast();
+            }, 300);
         });
 
         // --- Confetti Blast ---
